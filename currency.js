@@ -29,19 +29,18 @@ var TaxfixCurrency = function(dbObj) {
 			};
 			self.currencyList.push(obj);
 		  }
-		  //console.log(self.currencyList);
 		});
 	}
 	this.loadCurrencyList();
 	this.getCurrencyList = function() {
 		return self.currencyList;
 	}
-	this.saveCalculateHistory = function(currency, rate, amount, result) {
+	this.saveCalculateHistory = function(from, to, rate, amount, result) {
 		var deferred = Q.defer();
 		var calculateLogs = self.dbObj.collection('calculateLogs');
 		var object = {
-			from_currency:'EUR',
-			to_currency:currency,
+			from_currency:from,
+			to_currency:to,
 			rate:rate,
 			amount:amount,
 			result:result,
@@ -62,15 +61,27 @@ var TaxfixCurrency = function(dbObj) {
 		});
 		return deferred.promise;
 	}
-	this.calculateCurrencyInfo = function(currency, amount) {
+	this.calculateCurrencyInfo = function(from, to, amount) {
 		var result = 0.0;
-		for (var i = 0; i < self.currencyList.length; i++) {
-			if (currency == self.currencyList[i].currency) {
-				result = amount * self.currencyList[i].rate;
-				if (self.dbObj != null) {
-					self.saveCalculateHistory(currency, self.currencyList[i].rate, amount, result);
+		if (from == "EUR") {//EUR --> Other
+			for (var i = 0; i < self.currencyList.length; i++) {
+				if (to == self.currencyList[i].currency) {
+					result = amount * self.currencyList[i].rate;
+					if (self.dbObj != null) {
+						self.saveCalculateHistory(from, to, self.currencyList[i].rate, amount, result);
+					}
+					break;
 				}
-				break;
+			}
+		} else {//Other --> EUR
+			for (var i = 0; i < self.currencyList.length; i++) {
+				if (from == self.currencyList[i].currency) {
+					result = amount / self.currencyList[i].rate;
+					if (self.dbObj != null) {
+						self.saveCalculateHistory(from, to, self.currencyList[i].rate, amount, result);
+					}
+					break;
+				}
 			}
 		}
 		return result;

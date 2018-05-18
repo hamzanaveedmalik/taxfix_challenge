@@ -15,7 +15,8 @@ Build an API using Node.js that can convert currencies with the help of the Euro
 http://localhost:3000/currency
 
 ### Perform convert currencies
-http://localhost:3000/currency/calc
+http://localhost:3000/currency/calc?from=KRW&to=EUR&amount=10000
+http://localhost:3000/currency/calc?from=EUR&to=USD&amount=20
 
 ### Display stored convert currencies log
 http://localhost:3000/currency/logs
