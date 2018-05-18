@@ -1,4 +1,4 @@
-# docker-compose의 버전을 명시. 버전별로 명령어등의 약간의 차이가 있다.
+# docker-compose의 버전을 명시
 version: "2"
 
 services:
@@ -24,24 +24,16 @@ services:
         container_name: app
         build: .
 
-        # 환경변수를 지정할 수 있음.
         environment:
             NODE_ENV: localhost
         ports:
             - 3000:3000
         links:
             - mongodb:app_db
-#        depends_on:
-#            - mongodb
+
     mongodb:
         image: mongo:latest
         container_name: mongodb
 
-#        environment:
-#          - MONGO_DATA_DIR=/data/db
-#          - MONGO_LOG_DIR=/dev/null
-#        volumes:
-#          - ./data/db:/data/db
         ports:
             - 27017:27017
-#        command: mongod --smallfiles --logpath=/dev/null # --quiet
