@@ -88,4 +88,5 @@ var TaxfixCurrency = function(dbObj) {
 	}
 }
 
+module.exports = TaxfixCurrency;
 
