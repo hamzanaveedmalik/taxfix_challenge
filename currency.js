@@ -4,7 +4,6 @@
 
 */
 
-var Q = require("q");
 var HTMLParser = require('fast-html-parser');
 var request = require('request');
 
@@ -36,30 +35,30 @@ var TaxfixCurrency = function(dbObj) {
 		return self.currencyList;
 	}
 	this.saveCalculateHistory = function(from, to, rate, amount, result) {
-		var deferred = Q.defer();
-		var calculateLogs = self.dbObj.collection('calculateLogs');
-		var object = {
-			from_currency:from,
-			to_currency:to,
-			rate:rate,
-			amount:amount,
-			result:result,
-			created_at:new Date()
-		};
-		calculateLogs.save(object, function(err, result) {
-			if (err) deferred.reject(err);
-			else deferred.resolve(result);
+		return new Promise(function(resolve, reject) {
+			var calculateLogs = self.dbObj.collection('calculateLogs');
+			var object = {
+				from_currency:from,
+				to_currency:to,
+				rate:rate,
+				amount:amount,
+				result:result,
+				created_at:new Date()
+			};
+			calculateLogs.save(object, function(err, result) {
+				if (err) reject(err);
+				else resolve(result);
+			});
 		});
-		return deferred.promise;
 	}
 	this.loadCalculateHistory = function() {
-		var deferred = Q.defer();
-		var calculateLogs = self.dbObj.collection('calculateLogs');
-		calculateLogs.find({}).sort({createdAt:-1}).toArray(function(err, results) {
-			if (err) deferred.reject(err);
-			else deferred.resolve(results);
+		return new Promise(function(resolve, reject) {
+			var calculateLogs = self.dbObj.collection('calculateLogs');
+			calculateLogs.find({}).sort({createdAt:-1}).toArray(function(err, results) {
+				if (err) reject(err);
+				else resolve(results);
+			});
 		});
-		return deferred.promise;
 	}
 	this.calculateCurrencyInfo = function(from, to, amount) {
 		var result = 0.0;
