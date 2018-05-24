@@ -5,6 +5,7 @@
 */
 
 var HTMLParser = require('fast-html-parser');
+var parseString = require('xml2js').parseString;
 var request = require('request');
 
 var TaxfixCurrency = function(dbObj) {
@@ -12,24 +13,20 @@ var TaxfixCurrency = function(dbObj) {
 	this.dbObj = dbObj;
 	this.currencyList = [];
 	this.loadCurrencyList = function() {
-		request('https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html', 
+		request('https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml', 
 			function (error, response, body) {
 			if (error) console.log(error);
 			else {
-				var currencyList = [];
-				const root = HTMLParser.parse(body);
-				const table = root.querySelector('.ecb-forexTable');
-				const tbody = table.querySelector('tbody');
-				for (var i = 1; i < 64; i+=2) {
-					var str = tbody.childNodes[i].text+"";
-					var contents = str.split("\n");
-					var obj = {
-						currency:contents[1].trim(),
-						alignLeft:contents[2].trim(),
-						rate:Number(contents[4])
-					};
-					self.currencyList.push(obj);
-				}
+				parseString(body, function (err, result) {
+				    const cubes = result["gesmes:Envelope"]["Cube"][0]["Cube"][0]["Cube"];
+					for (var i = 0; i < cubes.length; i++) {
+						var obj = {
+							currency:cubes[i]["$"].currency,
+							rate:Number(cubes[i]["$"].rate)
+						};
+						self.currencyList.push(obj);
+					}
+				});
 			}
 		});
 	}
