@@ -28,3 +28,7 @@ Build an API using Node.js that can convert currencies with the help of the Euro
 * run "docker-compose up"
 * run webbrowser
 * connect to http://localhost:3000 in webbrowser
+
+## TESTING
+
+* npm test

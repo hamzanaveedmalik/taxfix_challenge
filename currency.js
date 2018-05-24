@@ -14,20 +14,23 @@ var TaxfixCurrency = function(dbObj) {
 	this.loadCurrencyList = function() {
 		request('https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html', 
 			function (error, response, body) {
-
-		  const root = HTMLParser.parse(body);
-		  const table = root.querySelector('.ecb-forexTable');
-		  const tbody = table.querySelector('tbody');
-		  for (var i = 1; i < 64; i+=2) {
-		  	var str = tbody.childNodes[i].text+"";
-			var contents = str.split("\n");
-			var obj = {
-				currency:contents[1].trim(),
-				alignLeft:contents[2].trim(),
-				rate:Number(contents[4])
-			};
-			self.currencyList.push(obj);
-		  }
+			if (error) console.log(error);
+			else {
+				var currencyList = [];
+				const root = HTMLParser.parse(body);
+				const table = root.querySelector('.ecb-forexTable');
+				const tbody = table.querySelector('tbody');
+				for (var i = 1; i < 64; i+=2) {
+					var str = tbody.childNodes[i].text+"";
+					var contents = str.split("\n");
+					var obj = {
+						currency:contents[1].trim(),
+						alignLeft:contents[2].trim(),
+						rate:Number(contents[4])
+					};
+					self.currencyList.push(obj);
+				}
+			}
 		});
 	}
 	this.loadCurrencyList();

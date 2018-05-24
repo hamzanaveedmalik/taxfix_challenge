@@ -2,10 +2,8 @@ const TaxfixCurrency = require('./currency.js');
 const config = require('./config');
 const { db:{host,port,name}} = config;
 
-console.log(host);
 const MongoClient = require('mongodb').MongoClient;
 const url = 'mongodb://'+host+':'+port;
-console.log(url);
 
 var db = {};
  
